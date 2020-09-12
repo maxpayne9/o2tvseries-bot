@@ -19,9 +19,7 @@ text2 = colored("We experienced an error...\nLet's try this again...\n", 'red')
 
 print("Welcome to the script")
 time.sleep(1)
-#print("\twritten and managed by max_payne")
-#time.sleep(2)
-#print("\t\t\tfor Kingz Cyber\n\n")
+
 
 try:
 	while True:
