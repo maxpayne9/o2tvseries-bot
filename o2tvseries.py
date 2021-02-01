@@ -5,6 +5,7 @@ from tqdm import tqdm
 from exceptions import *
 from pathlib import Path
 import os
+import internetdownloadmanager #meant to replace wget
 
 base_url = 'https://o2tvseries.co'
 
