@@ -7,7 +7,6 @@ from termcolor import colored
 from tqdm import tqdm
 import time
 import logging, traceback
-import winsound
 from requests import ConnectionError
 
 text = colored("We cannot find what you requested\nTry something else\n", 'red') 
@@ -103,6 +102,7 @@ try:
 			get_file(ep_dict)
 			path_var.clear()
 			if os.name != 'posix':
+				import winsound
 				winsound.Beep(650,180)
 
 		else:
