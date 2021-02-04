@@ -177,7 +177,9 @@ def download_all(video_links):
 #Alternate downl_all
 path_var = []
 def download_all(link):
-	import wget
+	from internetdownloadmanager import Downloader
+	
+	downloader = Downloader(worker=25, part_size=1000000, resumable=True)
 
 	while True:
 		cwd = os.getcwd() # recording the current working directory
@@ -194,9 +196,11 @@ def download_all(link):
 
 	
 	if not os.path.exists(file_name):
-		wget.download(link, file_name)
-	else:
-    		print("%s exists"%file_name)
+		downloader.download(link, file_name)
+	elif os.path.exists(file_name+'.resumable'):
+		print("resuming %s",file_name)
+		downloader.resume(file_name+'.resumable')
+		os.remove(file_name+'resumable') # cleaning up
 		
 
 	print("\n%s downloaded!\n"%file_name)
@@ -279,13 +283,17 @@ def link_verifier(php_link):
 	from selenium.common.exceptions import ElementClickInterceptedException
 
 	# Ensuring geckodriver.exe exists for windows
-	webdriver_path = Path("geckodriver.exe")
-	opts = Options()
-	opts.set_headless()
-	assert opts.set_headless	# operating in headless mode
-	browser = Firefox( options=opts, executable_path=webdriver_path)
-
-
+	if os.name != 'posix':
+		webdriver_path = Path("geckodriver.exe")
+		opts = Options()
+		opts.set_headless()
+		assert opts.set_headless	# operating in headless mode
+		browser = Firefox( options=opts, executable_path=webdriver_path)
+	else:
+		webdriver_path = Path("geckodriver", executable_path=webdriver_path)
+		opts= Options()
+		opts.set_headless()
+		browser = Firefox( options=opts)
 
 	print("Generating a real link...\nPlease wait...\n")
 	browser.get(php_link)
