@@ -197,10 +197,11 @@ def download_all(link):
 	
 	if not os.path.exists(file_name):
 		downloader.download(link, file_name)
+		os.remove(file_name+'.resumable') # cleaning up
 	elif os.path.exists(file_name+'.resumable'):
 		print("resuming %s",file_name)
 		downloader.resume(file_name+'.resumable')
-		os.remove(file_name+'resumable') # cleaning up
+		os.remove(file_name+'.resumable') # cleaning up
 		
 
 	print("\n%s downloaded!\n"%file_name)
