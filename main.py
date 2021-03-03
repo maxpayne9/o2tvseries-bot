@@ -18,6 +18,7 @@ text2 = colored("We experienced an error...\nLet's try this again...\n", 'red')
 
 print("Welcome to the script")
 time.sleep(1)
+print("\t\twritten by Ismael!\n")
 
 
 try:
