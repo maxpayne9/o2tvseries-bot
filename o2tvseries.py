@@ -214,6 +214,9 @@ def get_file(link_dict, *pilot):
 	will take a link, parse it if necessary and return a file
 	'''
 	# Case 1: User selected all episodes
+	unverified = []
+	from concurrent.futures import ThreadPoolExecutor
+	
 	if len(pilot) == 0:
 		print("\nDownloading all...\n")
 		video_links = list(link_dict.values())
@@ -224,10 +227,13 @@ def get_file(link_dict, *pilot):
 			soup = BeautifulSoup(r.content, 'html.parser')
 			down_tag = soup.find(id="download")
 			php_link = base_url+down_tag['href']
+			# down_url = link_verifier(php_link)
 
-			down_url = link_verifier(php_link)
+			unverified.append(php_link)
+			with ThreadPoolExecutor(max_workers=len(unverified)) as executor:
+				down_urls = executor.map(link_verifier, unverified)
 
-			download_all(down_url)
+				executor.map(download_all, down_urls)
 
 		print("All videos downloaded!\n\nThank you for your patience!!!")
 
