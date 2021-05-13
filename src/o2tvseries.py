@@ -308,7 +308,7 @@ def link_verifier(php_link):
 	browser = Firefox( options=opts)
 
 
-	print("...verifying {}".format(php_link))
+	print("...verifying {}\t".format(php_link, end=' '))
 	browser.get(php_link)
 	while True:
 		try:
@@ -332,6 +332,6 @@ def link_verifier(php_link):
 				continue
 	
 	browser.quit() # Shuts the current instance of the browser
-	print("Done!\n")
+	print("Done!")
 	return new_url
 	
