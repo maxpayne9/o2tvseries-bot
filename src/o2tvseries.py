@@ -308,7 +308,7 @@ def link_verifier(php_link):
 	browser = Firefox( options=opts)
 
 
-	print("Generating a real link...\nPlease wait...\n")
+	print("...verifying {}".format(php_link))
 	browser.get(php_link)
 	while True:
 		try:
@@ -320,7 +320,7 @@ def link_verifier(php_link):
 			# Hoping the mouse is still at a position as above;
 			actionchains.click().perform()
 			
-			print("Interception error... trying again...\n")
+			#print("Interception error... trying again...\n")
 			continue
 		finally:
 			if 'mp4' in browser.current_url:
