@@ -191,11 +191,11 @@ def download_all(link):
 		
 		try:
 			#os.chdir(cwd)
-			os.makedirs("/Movies/%s_%s" %(path_var[0],path_var[1]))
-			os.chdir("/Movies/%s_%s" %(path_var[0],path_var[1]))
+			os.makedirs("/Movies/%s/%s" %(path_var[0],path_var[1]))
+			os.chdir("/Movies/%s/%s" %(path_var[0],path_var[1]))
 			break
 		except OSError:
-			os.chdir("/Movies/%s_%s" %(path_var[0],path_var[1]))
+			os.chdir("/Movies/%s/%s" %(path_var[0],path_var[1]))
 			break
 
 	file_name = link.split('/')[-1]
@@ -290,6 +290,7 @@ def link_verifier(php_link):
 	it returns a real link with file needed!
 	'''
 	from selenium import webdriver
+	import geckodriver_autoinstaller as geckodriver
 	from selenium.webdriver.common.by import By 
 	from selenium.webdriver.support.ui import WebDriverWait
 	from selenium.webdriver.common.keys import Keys
@@ -298,10 +299,11 @@ def link_verifier(php_link):
 	from selenium.common.exceptions import ElementClickInterceptedException, WebDriverException
 
 	# Ensuring geckodriver.exe exists for windows
-	if os.name != 'posix':
-		webdriver_path = Path("src/assets/geckodriver.exe")
-	else:
-		webdriver_path = Path("src/assets/geckodriver-linux.gz")
+	#if os.name != 'posix':
+	#	webdriver_path = Path("src/assets/geckodriver.exe")
+	#else:
+	#	webdriver_path = Path("src/assets/geckodriver-linux.gz")
+	geckodriver.install()
 	opts = Options()
 	opts.set_headless()
 	assert opts.set_headless	# operating in headless mode

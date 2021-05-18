@@ -1,7 +1,8 @@
-requests==2.24.0
 selenium==3.141.0
-termcolor==1.1.0
 internetdownloadmanager==0.0.2
-urllib3==1.25.10
 tqdm==4.48.2
+geckodriver_autoinstaller==0.1.0
+termcolor==1.1.0
+urllib3==1.25.10
+requests==2.24.0
 beautifulsoup4==4.9.3

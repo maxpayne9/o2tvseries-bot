@@ -75,7 +75,7 @@ class DataRecordForm(tk.Frame):
       self.inputs['Time'] = LabelInput(recordinfo, "Time", input_class=ttk.Combobox, input_var=tk.StringVar(), input_args={"values": ["8.00", "12.00", "16.00", "20.00"]})
       self.inputs['Time'].grid(row=0, column=1)
 
-      self.inputs['Technician'] = LabelInput(recordinfo, "Technician" input_var=tk.StringVar())
+      self.inputs['Technician'] = LabelInput(recordinfo, "Technician", input_var=tk.StringVar())
       self.inputs['Technician'].grid(row=0, column=2)
 
 class Application(tk.Tk):

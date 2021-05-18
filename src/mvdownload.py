@@ -8,7 +8,10 @@ class MvDownload(object):
     s_term = []
 
     def __init__(self, *args, **kwargs):
-        self.s_term.append(sys.argv[1])
+        if ',' in sys.argv[1]: #implying multiple title search
+            self.s_term = sys.argv[1].split(',')
+        else:
+            self.s_term.append(sys.argv[1])
         self.argv = sys.argv[2:]
         self.opts,self.args = getopt.getopt(self.argv,'s:e:', ["season=", "episode="])
 
@@ -25,9 +28,9 @@ class MvDownload(object):
             while True:
                 self.results = search(term)
                 if len(self.results.keys()) > 5:
-                    print('Warning!....too many similarities\n...taking the last result\n...if undesirable, CTRL+C and refine your search')
-                    break
-                break
+                    print('Warning!....too many similarities\n...please refine your search')
+                    exit()
+            
             for v in list(self.results.keys()):
                 if term in str(v.lower()):
                     self.index = list(self.results.keys()).index(v)
@@ -57,6 +60,7 @@ class MvDownload(object):
                         path_var.append(self.sn_name.split('\n')[0]) # creating paths
 
                 self.parse_get(self.sn_name)
+            print("...done with {}".format(term))
                
                     
 
@@ -76,4 +80,6 @@ if __name__ == '__main__':
         MvDownload()
     except KeyboardInterrupt:
         exit(1)
+    except ConnectionError:
+        print("Please check rout internet connection")
 
