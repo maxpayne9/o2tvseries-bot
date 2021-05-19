@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -25,8 +24,8 @@ def link_parser(link):
 	'''
 
 
-	# print("\nPlease wait...\n")
-	# time.sleep(1)
+	print("\nPlease wait...\n")
+	time.sleep(1)
 
 	try:
 		page = requests.get(link)
@@ -61,7 +60,7 @@ def search(search_term_):
 	"""
 	search() takes a search term and refines it
 	before running it in o2tvseries.co.
-	it returns a dictionary.
+	it returns a list results.
 	"""
 	# converting whatever is searched to a string
 	search_term=str(search_term_)
@@ -94,12 +93,9 @@ def search(search_term_):
 	for n in range(len(results)):
 		results_links[results[n].text.strip()]=results[n].find('a')['href']
 
-	#for key, value in driver_dict.items():
-	#	print(key,'.', value.replace('\n',' ')) # replacing unwanted escapes
+	for key, value in driver_dict.items():
+		print(key,'.', value.replace('\n',' ')) # replacing unwanted escapes
 		# You must not implement replace() higher than here due to key:value check
-	#display(results_links)
-	return results_links
-
 
 def get_link(key, dictionary):
 	"""
@@ -179,39 +175,36 @@ def download_all(video_links):
 '''
 
 #Alternate downl_all
-path_var = [] # useful in formulating paths
-cwd = os.getcwd() # recording the current working directory
+path_var = []
 def download_all(link):
 	from internetdownloadmanager import Downloader
 	
 	downloader = Downloader(worker=25, part_size=1000000, resumable=True)
 
-	
 	while True:
-		
+		cwd = os.getcwd() # recording the current working directory
 		try:
-			#os.chdir(cwd)
-			os.makedirs("/Movies/%s/%s" %(path_var[0],path_var[1]))
-			os.chdir("/Movies/%s/%s" %(path_var[0],path_var[1]))
+			os.makedirs("Movies/%s_%s" %(path_var[0],path_var[1]))
+			os.chdir("Movies/%s_%s" %(path_var[0],path_var[1]))
 			break
 		except OSError:
-			os.chdir("/Movies/%s/%s" %(path_var[0],path_var[1]))
+			os.chdir("Movies/%s_%s" %(path_var[0],path_var[1]))
 			break
 
 	file_name = link.split('/')[-1]
-	#print("Downloading file:%s"%file_name)
+	print("Downloading file:%s"%file_name)
 
 	
 	if not os.path.exists(file_name):
 		downloader.download(link, file_name)
 		os.remove(file_name+'.resumable') # cleaning up
 	elif os.path.exists(file_name+'.resumable'):
-		#print("resuming %s",file_name)
+		print("resuming %s",file_name)
 		downloader.resume(file_name+'.resumable')
 		os.remove(file_name+'.resumable') # cleaning up
 		
 
-	#print("\n%s downloaded!\n"%file_name)
+	print("\n%s downloaded!\n"%file_name)
 	os.chdir(cwd) # returning to the working directory
 	
 	return
@@ -225,12 +218,11 @@ def get_file(link_dict, *pilot):
 	from concurrent.futures import ThreadPoolExecutor
 	
 	if len(pilot) == 0:
-		#print("\nDownloading all...\n")
+		print("\nDownloading all...\n")
 		video_links = list(link_dict.values())
 
 		for link_ in video_links:
 			link = base_url+link_
-			print('Processing: {}'.format(link))
 			r = requests.get(link)
 			soup = BeautifulSoup(r.content, 'html.parser')
 			down_tag = soup.find(id="download")
@@ -238,12 +230,12 @@ def get_file(link_dict, *pilot):
 			# down_url = link_verifier(php_link)
 
 			unverified.append(php_link)
-		with ThreadPoolExecutor(max_workers=3) as executor:
-			down_urls = executor.map(link_verifier, unverified)
-			
-			executor.map(download_all, down_urls)
+			with ThreadPoolExecutor(max_workers=len(unverified)) as executor:
+				down_urls = executor.map(link_verifier, unverified)
 
-		#print("All videos downloaded!\n\nThank you for your patience!!!")
+				executor.map(download_all, down_urls)
+
+		print("All videos downloaded!\n\nThank you for your patience!!!")
 
 
 	
@@ -290,27 +282,27 @@ def link_verifier(php_link):
 	it returns a real link with file needed!
 	'''
 	from selenium import webdriver
-	import geckodriver_autoinstaller as geckodriver
 	from selenium.webdriver.common.by import By 
 	from selenium.webdriver.support.ui import WebDriverWait
 	from selenium.webdriver.common.keys import Keys
 	from selenium.webdriver import Firefox
 	from selenium.webdriver.firefox.options import Options
-	from selenium.common.exceptions import ElementClickInterceptedException, WebDriverException
+	from selenium.common.exceptions import ElementClickInterceptedException
 
 	# Ensuring geckodriver.exe exists for windows
-	#if os.name != 'posix':
-	#	webdriver_path = Path("src/assets/geckodriver.exe")
-	#else:
-	#	webdriver_path = Path("src/assets/geckodriver-linux.gz")
-	geckodriver.install()
-	opts = Options()
-	opts.set_headless()
-	assert opts.set_headless	# operating in headless mode
-	browser = Firefox( options=opts)
+	if os.name != 'posix':
+		webdriver_path = Path("geckodriver.exe")
+		opts = Options()
+		opts.set_headless()
+		assert opts.set_headless	# operating in headless mode
+		browser = Firefox( options=opts, executable_path=webdriver_path)
+	else:
+		webdriver_path = Path("geckodriver", executable_path=webdriver_path)
+		opts= Options()
+		opts.set_headless()
+		browser = Firefox( options=opts)
 
-
-	print("...verifying {}\t".format(php_link, end=' '))
+	print("Generating a real link...\nPlease wait...\n")
 	browser.get(php_link)
 	while True:
 		try:
@@ -322,7 +314,7 @@ def link_verifier(php_link):
 			# Hoping the mouse is still at a position as above;
 			actionchains.click().perform()
 			
-			#print("Interception error... trying again...\n")
+			print("Interception error... trying again...\n")
 			continue
 		finally:
 			if 'mp4' in browser.current_url:
@@ -334,6 +326,6 @@ def link_verifier(php_link):
 				continue
 	
 	browser.quit() # Shuts the current instance of the browser
-	print("Done!")
+	print("Done!\n")
 	return new_url
 	

@@ -1,5 +1,6 @@
 import sys, getopt
 from o2tvseries import *
+from requests.exceptions import *
 
 
 
@@ -81,5 +82,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         exit(1)
     except ConnectionError:
-        print("Please check rout internet connection")
+        print("Please check your internet connection")
+        exit(1)
 
